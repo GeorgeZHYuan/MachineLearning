@@ -1,5 +1,5 @@
 # MachineLearning
 Machine Learning Practice
 
-#Standford Andrew Ng
+# Standford Andrew Ng
 Run using octave
