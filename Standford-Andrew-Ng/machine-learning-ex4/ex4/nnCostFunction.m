@@ -35,7 +35,7 @@ Theta2_grad = zeros(size(Theta2));
 %               following parts.
 %
 % Part 1: Feedforward the neural network and return the cost in the
-%         variable J. After implementing Part 1, you can v=erify that your
+%         variable J. After implementing Part 1, you can verify that your
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
 %
@@ -62,63 +62,47 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-% Forward Prop and Un-regularized Cost Function
-%initialize
-a1 = [ones(m, 1) X];
-%for 1:thetas-1
-  z2 = a1*Theta1';
-  a2 = sigmoid(z2);
-  a2 = [ones(size(a2 ,1), 1) a2];
-%endfor
-%the output layer
-z3 = a2*Theta2';
-a3 = sigmoid(z3);
-%y into matrix
-yEqiv = zeros(size(y, 1), size(a3,2));
-for i = 1:size(y, 1);
-  yEqiv(i, y(i)) = 1;
+% Forward Propagation
+a1 = [ones(size(X, 1), 1), X];
+a2 = sigmoid (a1*Theta1');
+a2 = [ones(size(a2, 1), 1), a2];
+a3 = sigmoid (a2*Theta2');
+
+%unregularized cost function
+yMatrix = zeros(size(y,1), num_labels);
+for c=1:size(y,1)
+  yMatrix(c, y(c)) = 1;
 endfor
+J = sum(sum(-yMatrix.*log(a3) - (1-yMatrix).*log(1-a3))/m);
 
-%sum up the cost function
-J = sum(sum((-yEqiv.*log(a3)-(1-yEqiv).*(log(1-a3)))/m));
-
-% Regularization Term and Regularized Cost function
-T1 = Theta1;
-T2 = Theta2;
-T1(:, 1) = 0;
-T2(:, 1) = 0;
-thetaSum = sum(sum(T1.^2)) + sum(sum(T2.^2));
-J += (lambda/(2*m))*thetaSum;
+%regularzed cost function
+reg_theta1 = Theta1;
+reg_theta1(:,1) = zeros(size(Theta1,1),1);
+reg_theta2 = Theta2;
+reg_theta2(:,1) = zeros(size(Theta2,1),1);
+J += lambda*(sum(sum(reg_theta1.^2)) + sum(sum(reg_theta2.^2)))/(2*m);
 
 %Backpropagation
 delta_1 = zeros(size(Theta1));
 delta_2 = zeros(size(Theta2));
-T2(:, 1) = [];
-
-for t = 1:m
-  aa1 = [1, X(t, :)]';
+reg_theta2(:, 1) = [];
+for i = 1:m
+  aa1 = [1, X(i, :)]';
   zz2 = Theta1*aa1;
   aa2 = [1, sigmoid(zz2)']';
   zz3 = Theta2*aa2;
   aa3 = sigmoid(zz3);
-  
-  d3 = aa3 - yEqiv(t, :)';
-  d2 = (T2'*d3).*sigmoidGradient(zz2);
-
+  d3 = aa3 - yMatrix(i, :)';
+  d2 = (reg_theta2'*d3).*sigmoidGradient(zz2);
   delta_1 = delta_1 + d2*aa1';
   delta_2 = delta_2 + d3*aa2';
 endfor
-
 Theta1_grad = (delta_1+Theta1.*lambda)/m;
 Theta1_grad(:, 1) = delta_1(:,1)/m;
 Theta2_grad = (delta_2+Theta2.*lambda)/m;
 Theta2_grad(:, 1) = delta_2(:,1)/m;
-% -------------------------------------------------------------
 
-% =========================================================================
-
-% Unroll gradients
-grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
+% Unroll gradients for fmincg
+grad = [Theta1_grad(:) ; Theta2_grad(:)]
 
 end
