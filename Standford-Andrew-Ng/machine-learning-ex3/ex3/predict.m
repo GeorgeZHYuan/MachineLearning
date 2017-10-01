@@ -27,7 +27,7 @@ a1 = sigmoid(z1);
 
 a1 = [ones(size(z1, 1),1), a1];
 z2 = a1*Theta2';
-a2 = sigmoid(z2)
+a2 = sigmoid(z2);
 
 [p_maximum, p] = max(a2, [], 2);
 
