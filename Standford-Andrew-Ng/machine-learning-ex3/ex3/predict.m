@@ -6,6 +6,7 @@ function p = predict(Theta1, Theta2, X)
 % Useful values
 m = size(X, 1);
 num_labels = size(Theta2, 1);
+a1 = X;
 
 % You need to return the following variables correctly 
 p = zeros(size(X, 1), 1);
@@ -20,7 +21,7 @@ p = zeros(size(X, 1), 1);
 %       information see 'help max'. If your examples are in rows, then, you
 %       can use max(A, [], 2) to obtain the max for each row.
 %
-
+#{
 X = [ones(size(X, 1), 1), X];
 z1 = X*Theta1';
 a1 = sigmoid(z1);
@@ -30,6 +31,15 @@ z2 = a1*Theta2';
 a2 = sigmoid(z2);
 
 [p_maximum, p] = max(a2, [], 2);
+#}
+
+a1 = [ones(size(a1, 1), 1),a1];
+a2 = sigmoid(a1*Theta1');
+
+a2 = [ones(size(a2, 1), 1), a2];
+a3 = sigmoid(a2*Theta2');
+
+[p_maximum, p] = max(a3, [], 2);
 
 % =========================================================================
 
