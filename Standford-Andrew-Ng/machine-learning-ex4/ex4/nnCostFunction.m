@@ -92,8 +92,8 @@ for i = 1:m
   D1 += d2*a1(i,:);
   D2 += d3*a2(i,:);
 endfor
-Theta1_grad=D1/m;
-Theta2_grad=D2/m;
+Theta1_grad=D1/m + lambda*reg_theta1/m;
+Theta2_grad=D2/m + lambda*reg_theta2/m;
 
 % Unroll gradients for fmincg
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
