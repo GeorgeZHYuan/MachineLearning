@@ -82,27 +82,20 @@ reg_theta2 = Theta2;
 reg_theta2(:,1) = zeros(size(Theta2,1),1);
 J += lambda*(sum(sum(reg_theta1.^2)) + sum(sum(reg_theta2.^2)))/(2*m);
 
+
 %Backpropagation
-delta_1 = zeros(size(Theta1));
-delta_2 = zeros(size(Theta2));
-reg_theta2(:, 1) = [];
+D1 = zeros(size(Theta1));
+D2 = zeros(size(Theta2));
 for i = 1:m
-  aa1 = [1, X(i, :)]';
-  zz2 = Theta1*aa1;
-  aa2 = [1, sigmoid(zz2)']';
-  zz3 = Theta2*aa2;
-  aa3 = sigmoid(zz3);
-  d3 = aa3 - yMatrix(i, :)';
-  d2 = (reg_theta2'*d3).*sigmoidGradient(zz2);
-  delta_1 = delta_1 + d2*aa1';
-  delta_2 = delta_2 + d3*aa2';
+  d3 = (a3(i,:) - yMatrix(i, :))';
+  d2 = Theta2(:, 2:(size(Theta2,2)))'*d3 .* sigmoidGradient(Theta1 * a1(i,:)');
+  D1 += d2*a1(i,:);
+  D2 += d3*a2(i,:);
 endfor
-Theta1_grad = (delta_1+Theta1.*lambda)/m;
-Theta1_grad(:, 1) = delta_1(:,1)/m;
-Theta2_grad = (delta_2+Theta2.*lambda)/m;
-Theta2_grad(:, 1) = delta_2(:,1)/m;
+Theta1_grad=D1/m;
+Theta2_grad=D2/m;
 
 % Unroll gradients for fmincg
-grad = [Theta1_grad(:) ; Theta2_grad(:)]
+grad = [Theta1_grad(:) ; Theta2_grad(:)];
 
 end
